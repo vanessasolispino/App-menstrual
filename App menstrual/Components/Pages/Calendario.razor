@@ -1,0 +1,52 @@
+﻿@page "/calendario"
+@* De nuevo, activamos la interactividad *@
+@rendermode InteractiveServer
+@inject App_menstrual.Models.AppService AppState
+
+<PageTitle>Mi Calendario</PageTitle>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        @* Un pequeño truco: si no ha puesto nombre, dice "Usuaria" *@
+        <h2>Historial de @(string.IsNullOrWhiteSpace(AppState.Usuario.Nombre) ? "Usuaria" : AppState.Usuario.Nombre) 📅</h2>
+        <a href="/" class="btn btn-outline-primary">Volver al Inicio</a>
+    </div>
+
+    <p class="text-muted">Ciclo promedio configurado: <strong>@AppState.Usuario.DuracionCicloPromedio días</strong></p>
+
+    <div class="alert alert-info mt-3 fs-5">
+        <strong>Estado de tu ciclo:</strong> @AppState.ObtenerEstadoCiclo()
+    </div>
+
+    <hr class="my-4" />
+
+    <h3>Tus registros:</h3>
+
+    @if (AppState.FechasPeriodo.Count == 0)
+    {
+        <div class="alert alert-warning">Aún no has registrado ningún periodo en la pantalla de inicio.</div>
+    }
+    else
+    {
+        <ul class="list-group mb-4">
+            @foreach (var fecha in AppState.FechasPeriodo)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>🩸 Inicio de sangrado: <strong>@fecha.ToLongDateString()</strong></span>
+                </li>
+            }
+        </ul>
+
+        <button class="btn btn-danger" @onclick="BorrarHistorial">
+            Borrar todos los registros
+        </button>
+    }
+</div>
+
+@code {
+    private void BorrarHistorial()
+    {
+        // Limpiamos la lista que vive en el servicio
+        AppState.FechasPeriodo.Clear();
+    }
+}

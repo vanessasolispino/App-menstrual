@@ -1,0 +1,41 @@
+﻿@page "/calendario"
+@inject App_menstrual.Models.AppService AppState
+
+<PageTitle>Mi Calendario</PageTitle>
+
+<div class="contenedor-calendario">
+    <h2>Historial de @AppState.Usuario.Nombre 📅</h2>
+    <p>Ciclo promedio: <strong>@AppState.Usuario.DuracionCicloPromedio días</strong></p>
+
+    <hr />
+
+    <h3>Tus registros:</h3>
+    
+    @if (AppState.FechasPeriodo.Count == 0)
+    {
+        <div class="alert alert-info">Aún no has registrado ningún periodo.</div>
+    }
+    else
+    {
+        <ul class="lista-registros">
+            @foreach (var fecha in AppState.FechasPeriodo)
+            {
+                <li>🩸 Sangrado el: <strong>@fecha.ToShortDateString()</strong></li>
+            }
+        </ul>
+    }
+
+    <button class="btn btn-secondary mt-3" @onclick="BorrarHistorial">
+        Borrar todos los registros
+    </button>
+</div>
+
+@code {
+    // Aquí declaramos métodos exclusivos de la pantalla Calendario
+
+    private void BorrarHistorial()
+    {
+        // Limpiamos la lista que vive en el servicio
+        AppState.FechasPeriodo.Clear();
+    }
+}
